@@ -5,8 +5,22 @@ export default defineContentScript({
     const observer = new MutationObserver(() => {
       const images = document.querySelectorAll("img:not([draggable='false'])");
       const processed = new Set<Element>();
+      const isDarkTheme = document.documentElement.classList.contains("theme--dim")
+      || document.documentElement.classList.contains("theme--dark");
 
       const GAP = 4;
+
+      if (isDarkTheme) {
+        document.querySelectorAll("img").forEach(img => {
+          assertIsElement(img, HTMLImageElement);
+          img.style.filter = "brightness(0.8) contrast(1.2)";
+        });
+
+        document.querySelectorAll("video").forEach(video => {
+          assertIsElement(video, HTMLVideoElement);
+          video.style.filter = "brightness(0.8) contrast(1.2)";
+        });
+      }
 
       const processableImages = Array.from(images).filter(img => {
         assertIsElement(img, HTMLImageElement);
